@@ -174,7 +174,7 @@ log_config = dict(
 ```
 5. mmdet/core/class_names.py
 ```
-67def coco_classes():
+67 def coco_classes():
       # return [
       #     'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
       #     'truck', 'boat', 'traffic_light', 'fire_hydrant', 'stop_sign',
@@ -214,7 +214,8 @@ log_config = dict(
     CLASSES=('R','G','B')
 ```
 7. trainning your maskrcnn.
-7.1 create  configs/tooth and copy .py from config/maskrcnn
+
+7.1 create  configs/tooth and copy .py from config/maskrcnn.
 ```
 tooth  
   |_mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth.py
