@@ -111,6 +111,124 @@ Some other methods are also supported in [projects using MMDetection](./docs/pro
 
 Please refer to [get_started.md](docs/get_started.md) for installation.
 
+## Traning your own dataset
+0. prepare your dataset
+```
+tooth
+  |_train
+    |_**********.png
+    ...
+    |_annotation_train.json
+  |_val
+    |_*********.png
+    ...
+    |_annotation_val.json
+```
+1. config configs/__base__/coco_instance.py
+```
+2      data_root = 'tooth/'
+
+33     train=dict(
+        type=dataset_type,
+        ann_file=data_root + 'train/annotation_coco.json',
+        img_prefix=data_root + 'train/',
+        pipeline=train_pipeline),
+    val=dict(
+        type=dataset_type,
+        ann_file=data_root + 'val/annotation_coco.json',
+        img_prefix=data_root + 'val/',
+        pipeline=test_pipeline),
+    test=dict(
+        type=dataset_type,
+        ann_file=data_root + 'val/annotation_coco.json',
+        img_prefix=data_root + 'val/',
+        pipeline=test_pipeline))
+```
+2. configs/__base__/models/maskrcc_r50_fpn.py
+```
+num_classes=3# not include background
+```
+3. configs/__base__/schedules/schedule_1x.py
+```
+optimizer = dict(type='SGD', lr=0.006, momentum=0.9, weight_decay=0.0001)
+optimizer_config = dict(grad_clip=None)
+# learning policy
+lr_config = dict(
+    policy='step',
+    warmup='linear',
+    warmup_iters=500,
+    warmup_ratio=0.001,
+    step=[8, 11])
+total_epochs = 500
+```
+4. configs/default_run_time.py, set saved interval.
+```
+checkpoint_config = dict(interval=20)
+# yapf:disable
+log_config = dict(
+    interval=50,
+    hooks=[
+        dict(type='TextLoggerHook'),
+        # dict(type='TensorboardLoggerHook')
+    ])
+```
+5. mmdet/core/class_names.py
+```
+67def coco_classes():
+      # return [
+      #     'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
+      #     'truck', 'boat', 'traffic_light', 'fire_hydrant', 'stop_sign',
+      #     'parking_meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
+      #     'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
+      #     'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
+      #     'sports_ball', 'kite', 'baseball_bat', 'baseball_glove', 'skateboard',
+      #     'surfboard', 'tennis_racket', 'bottle', 'wine_glass', 'cup', 'fork',
+      #     'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
+      #     'broccoli', 'carrot', 'hot_dog', 'pizza', 'donut', 'cake', 'chair',
+      #     'couch', 'potted_plant', 'bed', 'dining_table', 'toilet', 'tv',
+      #     'laptop', 'mouse', 'remote', 'keyboard', 'cell_phone', 'microwave',
+      #     'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
+      #     'scissors', 'teddy_bear', 'hair_drier', 'toothbrush'
+      # ]
+
+      return ['R','G','B']
+```
+6. mmdet/datasets/coco.py
+```
+29 class CocoDataset(CustomDataset):
+
+    # CLASSES = ('person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus',
+    #            'train', 'truck', 'boat', 'traffic light', 'fire hydrant',
+    #            'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',
+    #            'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe',
+    #            'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
+    #            'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat',
+    #            'baseball glove', 'skateboard', 'surfboard', 'tennis racket',
+    #            'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl',
+    #            'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot',
+    #            'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+    #            'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop',
+    #            'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
+    #            'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock',
+    #            'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush')
+    CLASSES=('R','G','B')
+```
+7. trainning your maskrcnn.
+7.1 create  configs/tooth and copy .py from config/maskrcnn
+```
+tooth  
+  |_mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth.py
+  |_mask_rcnn_r50_fpn_1x_coco.py
+```
+7.2 run
+```
+python /tools/train.py  mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth.py
+```
+8. testing the trained maskrcnn.
+```
+python /demo/mydemo.py configs/tooth/mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth.py    work_dirs/mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth/epoch_500.pth   --show
+```
+
 ## Getting Started
 
 Please see [get_started.md](docs/get_started.md) for the basic usage of MMDetection.
