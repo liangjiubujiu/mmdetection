@@ -112,7 +112,7 @@ Some other methods are also supported in [projects using MMDetection](./docs/pro
 Please refer to [get_started.md](docs/get_started.md) for installation.
 
 ## Traning your own dataset
-0. prepare your dataset
+0. prepare your dataset. boshi/boshi/yaqi/tooth
 ```
 tooth
   |_train
