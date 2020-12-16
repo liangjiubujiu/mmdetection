@@ -232,7 +232,14 @@ python demo/mydemo.py
 ```
 9.6 Open plot function and Visualize the Precision-Recall curve in mmdet/datasets/coco.py. 
 ```
-548-572 todo plot pr curve
+548-572 open todo plot pr curve
+549   change the third dimention into 0/1/2 for three classes.          
+                pr_array1 = cocoEval.eval['precision'][0, :, 0, 0, 2]
+                pr_array2 = cocoEval.eval['precision'][6, :, 0, 0, 2]
+                pr_array3 = cocoEval.eval['precision'][7, :, 0, 0, 2]
+                pr_array4 = cocoEval.eval['precision'][8, :, 0, 0, 2]
+                pr_array5 = cocoEval.eval['precision'][9, :, 0, 0, 2]
+
 ```
 9.7 Run tools/eval_metric.py.
 ```
