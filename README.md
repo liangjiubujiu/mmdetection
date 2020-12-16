@@ -246,7 +246,7 @@ python demo/mydemo.py
 python tools/eval_metric.py
 ```
 10 Show mAP during trainning.
-``
+```
 python tools/analyze_logs.py plot_curve /home/liangjiubujiu/Project/mmdetection-master/work_dirs/cascade_rcnn_r50_sac_1x_coco/20201214_144511.log.json /home/liangjiubujiu/Project/mmdetection-master/work_dirs/cascade_rcnn_r50_rfp_1x_coco/20201213_235433.log.json /home/liangjiubujiu/Project/mmdetection-master/work_dirs/detectors_cascade_rcnn_r50_1x_coco/20201215_033344.log.json /home/liangjiubujiu/Project/mmdetection-master/work_dirs/cascade_rcnn_r50_sac_1x_coco_albu/20201216_115552.log.json --keys bbox_mAP --legend sac rfp detectors sac+albu
 ```
 ## Getting Started
