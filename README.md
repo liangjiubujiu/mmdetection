@@ -223,11 +223,66 @@ tooth
 ```
 7.2 run
 ```
-python /tools/train.py  mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth.py
+python /tools/train.py  configs/tooth/mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth.py
 ```
 8. testing the trained maskrcnn.
 ```
 python /demo/mydemo.py configs/tooth/mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth.py    work_dirs/mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_tooth/epoch_500.pth   --show
+```
+9.change other parameters in model.
+For example, add data augmentation alub in train_pipeline.
+9.1 change config file in work_dirs/cascade_rcnn_r50_sac_1x_coco/cascade_rcnn_r50_sac_1x_coco.py, rename work_dirs for now model.
+```
+190 albu_train_transforms = [
+    dict(
+        type='ShiftScaleRotate',
+        shift_limit=0.0625,
+        scale_limit=0.0,
+        rotate_limit=180,
+        interpolation=1,
+        p=0.5)
+]
+212 dict(
+        type='Albu',
+        transforms=[
+            dict(
+                type='ShiftScaleRotate',
+                shift_limit=0.0625,
+                scale_limit=0.0,
+                rotate_limit=180,
+                interpolation=1,
+                p=0.5)
+        ],
+336 work_dir = './work_dirs/cascade_rcnn_r50_sac_1x_coco_albu'
+```
+9.2 Train the new model with the modified config in 9.1
+```
+python tools/train.py work_dirs/cascade_rcnn_r50_sac_1x_coco/cascade_rcnn_r50_sac_1x_coco.py
+```
+9.3 change demo/mydemo.py
+```
+51     parser.add_argument('--config', default='work_dirs/cascade_rcnn_r50_sac_1x_coco_albu/cascade_rcnn_r50_sac_1x_coco.py',help='test config file path')
+    parser.add_argument('--checkpoint', default='work_dirs/cascade_rcnn_r50_sac_1x_coco_albu/epoch_60.pth',help='checkpoint file')
+    parser.add_argument('--out', default='result/cascade_rcnn_r50_sac_1x_coco_albu.pkl', help='output result file in pickle format')
+    
+```
+9.4 Test the new model
+```
+python demo/mydemo.py
+```
+9.5 Find the new test results in 'result/cascade_rcnn_r50_sac_1x_coco_albu.pkl', and change the config file 'work_dirs/cascade_rcnn_r50_sac_1x_coco_albu/cascade_rcnn_r50_sac_1x_coco.py in tools/eval_metric.py.
+```
+19  parser.add_argument('--config', default='work_dirs/cascade_rcnn_r50_sac_1x_coco_albu/cascade_rcnn_r50_sac_1x_coco.py',help='Config of the model')
+    parser.add_argument('--pkl_results', default='result/cascade_rcnn_r50_sac_1x_coco_albu.pkl',help='Results in pickle format')
+    
+```
+9.6 Open plot function and Visualize the Precision-Recall curve in mmdet/datasets/coco.py. 
+```
+548-572 todo plot pr curve
+```
+9.7 Run tools/eval_metric.py.
+```
+python tools/eval_metric.py
 ```
 
 ## Getting Started
